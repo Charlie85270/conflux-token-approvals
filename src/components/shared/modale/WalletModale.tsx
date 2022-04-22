@@ -71,29 +71,25 @@ export const WalletModale = ({ visible, onClose }: Props) => {
                 <div className="p-8 bg-white rounded-lg shadow">
                   <div className="bg-white">
                     <div className="z-20 flex w-full gap-6 px-4 py-12 mx-auto text-center sm:px-6 lg:py-16 lg:px-8">
-                      {(window as any).conflux && (
-                        <WalletButton
-                          disabled={Boolean(coreAccount)}
-                          img="/images/fluent.png"
-                          title="Fluent"
-                          onClick={() => connectWallet(connectFluent)}
-                        />
-                      )}
-                      {(window as any).ethereum && (
-                        <WalletButton
-                          disabled={Boolean(evmAccount)}
-                          img="/images/metamask.png"
-                          title="Metamask"
-                          onClick={() => connectWallet(connectMetaMask)}
-                        />
-                      )}
-                      {!(window as any).ethereum &&
-                        !(window as any).conflux && (
-                          <p>
-                            Please install Fluent or Metamask extension to
-                            continue
-                          </p>
-                        )}
+                      <WalletButton
+                        disabled={
+                          Boolean(coreAccount) || !(window as any).conflux
+                        }
+                        noProvider={!(window as any).conflux}
+                        img="/images/fluent.png"
+                        title="Fluent"
+                        onClick={() => connectWallet(connectFluent)}
+                      />
+
+                      <WalletButton
+                        disabled={
+                          Boolean(evmAccount) || !(window as any).ethereum
+                        }
+                        noProvider={!(window as any).ethereum}
+                        img="/images/metamask.png"
+                        title="Metamask"
+                        onClick={() => connectWallet(connectMetaMask)}
+                      />
                     </div>
                   </div>
                 </div>
@@ -110,10 +106,17 @@ interface WalletButtonProps {
   title: string;
   img: string;
   disabled?: boolean;
+  noProvider?: boolean;
   onClick: () => void;
 }
 
-const WalletButton = ({ title, img, onClick, disabled }: WalletButtonProps) => {
+const WalletButton = ({
+  title,
+  img,
+  onClick,
+  disabled,
+  noProvider,
+}: WalletButtonProps) => {
   return (
     <button
       disabled={disabled}
@@ -123,11 +126,16 @@ const WalletButton = ({ title, img, onClick, disabled }: WalletButtonProps) => {
       onClick={onClick}
     >
       <img src={img} alt="wallet" className="w-28"></img>
-      <span className="mt-6 text-lg">{title}</span>
-      {disabled && (
+      {!noProvider && <span className="mt-6 text-lg">{title}</span>}
+      {disabled && !noProvider && (
         <div className="absolute flex items-center bottom-2">
           <span className="w-3 h-3 pr-2 transform -translate-x-1/2 bg-green-500 rounded-full left-1/2 -bottom-2"></span>
           <span className=" text-md">Connected</span>
+        </div>
+      )}
+      {noProvider && (
+        <div className="flex items-start w-full mt-3">
+          <span className="text-md">Extension not installed</span>
         </div>
       )}
     </button>
