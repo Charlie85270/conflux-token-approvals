@@ -9,7 +9,7 @@ import {
   connect as connectMetaMask,
   useAccount as useEvmAccount,
 } from "@cfxjs/use-wallet/dist/ethereum";
-import { toast, ToastContainer } from "react-toastify";
+
 import AppContext from "../../../AppContext";
 import { isSameAddress } from "../../../utils/utils";
 
@@ -43,9 +43,8 @@ export const ManageAllApprovals = ({
     }
     try {
       await connect();
-      toast("Connect to success!!");
     } catch (err: any) {
-      toast("No provider found, please install Fluent or Metamask extension");
+      console.log(err);
     }
   };
 
@@ -85,6 +84,15 @@ export const ManageAllApprovals = ({
       if (evmAccount) sendTransaction(evmAccount);
     }
   };
+  //@ts-ignore
+  if (space === "CORE" && !window.conflux) {
+    return <p>Install fluent wallet to continue</p>;
+  }
+  //@ts-ignore
+  if (space === "EVM" && !window.ethereum) {
+    return <p>Install Metamask wallet to continue</p>;
+  }
+
   if (
     coreAccount &&
     !isSameAddress(addressInput, coreAccount) &&
@@ -95,7 +103,6 @@ export const ManageAllApprovals = ({
   }
   return (
     <div className="flex flex-col items-center gap-2">
-      <ToastContainer />
       <div className="flex w-full">
         {(space === "CORE" && coreAccount) ||
         (space === "EVM" && evmAccount) ? (

@@ -10,7 +10,7 @@ import {
   connect as connectMetaMask,
   useAccount as useEvmAccount,
 } from "@cfxjs/use-wallet/dist/ethereum";
-import { toast, ToastContainer } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import AppContext from "../../../AppContext";
 import BigNumber from "bignumber.js";
 import { format } from "js-conflux-sdk";
@@ -59,9 +59,7 @@ export const ManageApprovals = ({
     try {
       await connect();
       setIsEditMode(true);
-    } catch (err: any) {
-      toast("No provider found, please install Fluent or Metamask extension");
-    }
+    } catch (err: any) {}
   };
 
   const sendTransaction = async (account: string, amount: number) => {
@@ -151,6 +149,15 @@ export const ManageApprovals = ({
       if (evmAccount) sendTransaction(evmAccount, formatedAmount);
     }
   };
+
+  //@ts-ignore
+  if (space === "CORE" && !window.conflux) {
+    return <p>Install fluent wallet to continue</p>;
+  }
+  //@ts-ignore
+  if (space === "EVM" && !window.ethereum) {
+    return <p>Install Metamask wallet to continue</p>;
+  }
 
   if (
     coreAccount &&

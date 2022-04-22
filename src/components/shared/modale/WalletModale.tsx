@@ -1,8 +1,13 @@
 import { Fragment } from "react";
-import { connect as connectFluent } from "@cfxjs/use-wallet";
-import { connect as connectMetaMask } from "@cfxjs/use-wallet/dist/ethereum";
-
-import { ToastContainer, toast } from "react-toastify";
+import {
+  connect as connectFluent,
+  useAccount as useFluentAccount,
+} from "@cfxjs/use-wallet";
+import {
+  connect as connectMetaMask,
+  useAccount as useEvmAccount,
+} from "@cfxjs/use-wallet/dist/ethereum";
+import { ToastContainer } from "react-toastify";
 
 interface Props {
   visible: boolean;
@@ -10,6 +15,8 @@ interface Props {
 }
 
 export const WalletModale = ({ visible, onClose }: Props) => {
+  const coreAccount = useFluentAccount();
+  const evmAccount = useEvmAccount();
   if (!visible) {
     return null;
   }
@@ -17,11 +24,9 @@ export const WalletModale = ({ visible, onClose }: Props) => {
   const connectWallet = async (connection: () => Promise<void>) => {
     try {
       await connection();
-      toast("Connect to success!!");
       onClose();
     } catch (err) {
       if ((err as any)?.code === 4001) {
-        toast("Error");
         onClose();
       }
     }
@@ -66,16 +71,29 @@ export const WalletModale = ({ visible, onClose }: Props) => {
                 <div className="p-8 bg-white rounded-lg shadow">
                   <div className="bg-white">
                     <div className="z-20 flex w-full gap-6 px-4 py-12 mx-auto text-center sm:px-6 lg:py-16 lg:px-8">
-                      <WalletButton
-                        img="/images/fluent.png"
-                        title="Fluent"
-                        onClick={() => connectWallet(connectFluent)}
-                      />
-                      <WalletButton
-                        img="/images/metamask.png"
-                        title="Metamask"
-                        onClick={() => connectWallet(connectMetaMask)}
-                      />
+                      {(window as any).conflux && (
+                        <WalletButton
+                          disabled={Boolean(coreAccount)}
+                          img="/images/fluent.png"
+                          title="Fluent"
+                          onClick={() => connectWallet(connectFluent)}
+                        />
+                      )}
+                      {(window as any).ethereum && (
+                        <WalletButton
+                          disabled={Boolean(evmAccount)}
+                          img="/images/metamask.png"
+                          title="Metamask"
+                          onClick={() => connectWallet(connectMetaMask)}
+                        />
+                      )}
+                      {!(window as any).ethereum &&
+                        !(window as any).conflux && (
+                          <p>
+                            Please install Fluent or Metamask extension to
+                            continue
+                          </p>
+                        )}
                     </div>
                   </div>
                 </div>
@@ -91,17 +109,27 @@ export const WalletModale = ({ visible, onClose }: Props) => {
 interface WalletButtonProps {
   title: string;
   img: string;
+  disabled?: boolean;
   onClick: () => void;
 }
 
-const WalletButton = ({ title, img, onClick }: WalletButtonProps) => {
+const WalletButton = ({ title, img, onClick, disabled }: WalletButtonProps) => {
   return (
     <button
-      className="flex flex-col items-center px-12 py-8 bg-white border-2 rounded-md hover:bg-gray-100"
+      disabled={disabled}
+      className={`flex flex-col relative items-center px-12 py-8 bg-white border-2 rounded-md hover:bg-gray-100 ${
+        disabled ? "opacity-30" : ""
+      }`}
       onClick={onClick}
     >
       <img src={img} alt="wallet" className="w-28"></img>
       <span className="mt-6 text-lg">{title}</span>
+      {disabled && (
+        <div className="absolute flex items-center bottom-2">
+          <span className="w-3 h-3 pr-2 transform -translate-x-1/2 bg-green-500 rounded-full left-1/2 -bottom-2"></span>
+          <span className=" text-md">Connected</span>
+        </div>
+      )}
     </button>
   );
 };
