@@ -52,7 +52,9 @@ export const WalletDropDown = ({ onConnect }: Props) => {
         </div>
       );
     } else {
-      return <span>Connect wallet</span>;
+      return (
+        <span className="text-gray-100 hover:text-white">Connect wallet</span>
+      );
     }
   };
 
