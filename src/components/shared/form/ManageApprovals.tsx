@@ -167,6 +167,7 @@ export const ManageApprovals = ({
   ) {
     return <p>You're not the owner of this address</p>;
   }
+
   return (
     <div className="flex flex-col items-center gap-2">
       <ToastContainer />
@@ -218,20 +219,22 @@ export const ManageApprovals = ({
           <>
             <input
               type="number"
-              className="flex-1 w-20 px-4 py-2 text-base text-gray-700 placeholder-gray-400 bg-white border border-gray-300 rounded-lg shadow appearance-none focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+              className="flex-1 w-24 px-4 py-2 text-base text-gray-700 placeholder-gray-400 bg-white border border-gray-300 rounded-lg shadow appearance-none focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
               placeholder="0"
+              step=".01"
+              defaultValue={0}
               min={0}
               value={amount}
-              onChange={event => setAmount(parseInt(event.target.value) || 0)}
+              onChange={event => setAmount(parseFloat(event.target.value))}
             />
             <div className="flex w-full">
               <button
                 type="button"
-                disabled={amount === undefined}
+                disabled={Number.isNaN(amount)}
                 onClick={() => amount && !isLoading && manage(amount)}
                 className={`w-32 text-center flex justify-center ml-2 items-center px-4 py-2 text-sm font-semibold leading-6 text-white transition duration-150 ease-in-out bg-blue-500 rounded-md shadow ${
-                  amount === undefined && "cursor-not-allowed"
-                } hover:bg-blue-600  ${amount === undefined && "opacity-30"}`}
+                  Number.isNaN(amount) && "cursor-not-allowed"
+                } hover:bg-blue-600  ${Number.isNaN(amount) && "opacity-30"}`}
               >
                 {isLoading && (
                   <svg
