@@ -62,9 +62,9 @@ function TokenList({
         const icon = "";
         const dataToDecode = await reqDetailTransaction(token.hash, space);
         //@ts-ignore
-        const data = await token.contract.abi.decodeData(dataToDecode.data);
 
         try {
+          const data = await token.contract.abi.decodeData(dataToDecode.data);
           const tokenInfos = await reqToken(token.toTokenInfo.address, space);
           let allowance = 0;
           try {
@@ -129,7 +129,7 @@ function TokenList({
           return {
             ...tokenData,
             transactionHash: token.hash,
-            icon,
+            iconUrl: tokenInfos.iconUrl || tokenData.iconUrl,
             spender: { name: spenderData.name, address: spenderData.address },
             transaction: token,
             name: token.toContractInfo.name || `${token.toTokenInfo.name}`,

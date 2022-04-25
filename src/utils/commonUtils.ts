@@ -189,23 +189,6 @@ function getTokenListUrl(
   return mapping[standard][chainId];
 }
 
-export async function getTokenIcon(
-  tokenAddress: string,
-  chainId: number,
-  tokenMapping: TokenMapping = {}
-) {
-  // Retrieve a token icon from the token list if specified (filtering relative paths)
-  const tokenData = tokenMapping[tokenAddress];
-  const iconFromMapping = !tokenData?.iconUrl;
-
-  // Fall back to TrustWallet/assets for logos
-  const networkName = getTrustWalletName(chainId);
-
-  const icon = iconFromMapping || "erc20.png";
-
-  return icon;
-}
-
 export function toFloat(n: number, decimals: number): string {
   return (n / 10 ** decimals).toFixed(3);
 }

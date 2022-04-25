@@ -2,7 +2,6 @@ import { formatBalance } from "../../../utils/format";
 
 interface Props {
   symbol: string;
-  icon: string;
   balance: string;
   totalSupply?: string;
   decimals: number;

@@ -63,7 +63,7 @@ export interface Transaction {
 
 export interface TokenInfos {
   symbol?: string;
-  icon?: string;
+  iconUrl?: string;
   transaction?: Transaction;
   spender?: { name: string; address: string };
   name?: string;

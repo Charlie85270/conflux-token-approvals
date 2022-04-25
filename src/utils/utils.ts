@@ -97,20 +97,6 @@ function getTokenListUrl(
   return mapping[standard][space][chainId];
 }
 
-export async function getTokenIcon(
-  tokenAddress: string,
-  tokenMapping: TokenMapping = {}
-) {
-  // Retrieve a token icon from the token list if specified (filtering relative paths)
-  const tokenData = tokenMapping[tokenAddress];
-
-  const iconFromMapping = tokenData?.iconUrl;
-
-  const icon = iconFromMapping || "erc20.png";
-
-  return icon;
-}
-
 export function toFloat(n: number, decimals: number): string {
   return (n / 10 ** decimals).toFixed(3);
 }
@@ -194,6 +180,7 @@ export async function getTokenData(
   const userToken = userTokens.find(tok => tok.address === address);
 
   return {
+    iconUrl: token.iconUrl,
     symbol: token.symbol,
     decimals: tokenInfos.decimals || token.decimals,
     totalSupply: tokenInfos.totalSupply || token.totalSupply,
