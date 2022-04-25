@@ -35,7 +35,7 @@ export const ManageApprovals = ({
   allowance,
   totalSupply,
 }: Props) => {
-  const [amount, setAmount] = useState<number>();
+  const [amount, setAmount] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const { conflux } = useConflux();
