@@ -132,7 +132,10 @@ export const ManageApprovals = ({
     }
   };
 
-  const manage = async (amount: number) => {
+  const manage = async (amount?: number) => {
+    if (Number.isNaN(amount) || amount === undefined || isLoading) {
+      return null;
+    }
     const formatedAmount = new BigNumber(amount)
       .multipliedBy(new BigNumber(10).pow(decimal || 18))
       .toNumber();
@@ -231,7 +234,7 @@ export const ManageApprovals = ({
               <button
                 type="button"
                 disabled={Number.isNaN(amount)}
-                onClick={() => amount && !isLoading && manage(amount)}
+                onClick={() => manage(amount)}
                 className={`w-32 text-center flex justify-center ml-2 items-center px-4 py-2 text-sm font-semibold leading-6 text-white transition duration-150 ease-in-out bg-blue-500 rounded-md shadow ${
                   Number.isNaN(amount) && "cursor-not-allowed"
                 } hover:bg-blue-600  ${Number.isNaN(amount) && "opacity-30"}`}
