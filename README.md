@@ -1,6 +1,6 @@
 # Conflux tokens approvals
 
-Conflux-pools is an application that lists the staking pools on the conflux network.
+Conflux tokens approvals is an application to manage your tokens approvals on the conflux network.
 Conflux is a layer-1 blockchain, you can find all information about conflux here :
 This application is not official and has not been created by the conflux team, but it has received a grant from them: https://forum.conflux.fun/t/grant-proposal-token-approvals/14400
 
