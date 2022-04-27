@@ -1,22 +1,26 @@
-# cra-template-tailwindcss-typescript
+# Conflux tokens approvals
 
-A streamlined [Tailwind CSS v3.x](https://tailwindcss.com) template for [Create React App](https://github.com/facebook/create-react-app) in [TypeScript](https://www.typescriptlang.org/).
+Conflux-pools is an application that lists the staking pools on the conflux network.
+Conflux is a layer-1 blockchain, you can find all information about conflux here :
+This application is not official and has not been created by the conflux team, but it has received a grant from them: https://forum.conflux.fun/t/grant-proposal-token-approvals/14400
 
-> This template installs and sets up [Tailwind CSS](https://tailwindcss.com) with TypeScript support.
+The code is open source and anyone can participate in improving it.
+The purpose of this application is to improves users’ security by helping them become aware of the amount of funds in their wallet that might be operated by other actors. It is essential infrastructure that improves the overall UX of Conflux. With this application you can manage your approvals authorizations of contracts on your tokens.
 
-## Usage
+## Install and run the project
 
-```bash
-npx create-react-app --template tailwindcss-typescript
-```
+To run the project you'll need NodeJS and yarn installed in your machine.
 
-## Credits
+Install all dependencies
 
-This project was made possible thanks to the following projects.
+    yarn install
 
-1. [GeoffSelby/cra-template-tailwindcss](https://github.com/GeoffSelby/cra-template-tailwindcss) - A streamlined Tailwind CSS template for Create React App (in JavaScript).
-2. [cra-template-typescript](https://github.com/facebook/create-react-app/tree/master/packages/cra-template-typescript) - An official TypeScript template for create-react-app.
+Start the project
 
-## License
+    yarn start
 
-MIT © [Sung M. Kim](https://sung.codes)
+Then go to `localhost:3000` to see the app on your navigator
+
+Build the project for production
+
+    yarn build
