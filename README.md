@@ -1,5 +1,8 @@
 # Conflux tokens approvals
 
+<img width="1792" alt="banner" src="https://user-images.githubusercontent.com/34569321/165640331-53ad206a-9b78-432b-adeb-45d888655373.png">
+
+
 Conflux tokens approvals is an application to manage your tokens approvals on the conflux network.
 Conflux is a layer-1 blockchain, you can find all information about conflux here :
 This application is not official and has not been created by the conflux team, but it has received a grant from them: https://forum.conflux.fun/t/grant-proposal-token-approvals/14400
