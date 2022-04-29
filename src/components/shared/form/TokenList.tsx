@@ -33,12 +33,12 @@ function TokenList({
   transactions,
   tokenMapping,
   inputAddress,
+  userTokens,
   abi,
   isLoading,
 }: Props) {
   const [tokens, setTokens] = useState<TokenInfos[]>([]);
   const { space, hideZeroAllowance } = useContext(AppContext);
-  const [userTokens] = useState<TokenData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const { conflux } = useConflux();
 
@@ -59,7 +59,6 @@ function TokenList({
 
     const completeData = await Promise.all(
       transactionsWithContractInfos.map(async token => {
-        const icon = "";
         const dataToDecode = await reqDetailTransaction(token.hash, space);
         //@ts-ignore
 
@@ -89,6 +88,7 @@ function TokenList({
                 //@ts-ignore
                 window.ethereum
               );
+
               const signer = provider.getSigner();
 
               const contract = new ethers.Contract(
@@ -96,7 +96,7 @@ function TokenList({
                 ERC20,
                 provider
               );
-
+              console.log(contract);
               const signedContract = contract.connect(signer);
               if (!!signedContract.allowance) {
                 allowance = await signedContract.allowance(

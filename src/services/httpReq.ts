@@ -51,7 +51,7 @@ export const reqTransactions = (
   });
 };
 
-export const reqUserCoreTokens = (
+export const reqUserTokens = (
   address: string,
   space?: Space
 ): Promise<{ list: TokenData[] }> => {

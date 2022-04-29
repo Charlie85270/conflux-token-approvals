@@ -3,6 +3,9 @@ import Erc20TokenBalanceAllowance from "../form/TokenBalanceAllowance";
 import { ManageAllApprovals } from "../form/ManageAllApprovals";
 import { ManageApprovals } from "../form/ManageApprovals";
 import { TokenInfos } from "../Interfaces";
+import { useContext } from "react";
+import AppContext from "../../../AppContext";
+import { format } from "js-conflux-sdk";
 
 interface Props {
   tokens: TokenInfos[];
@@ -10,6 +13,12 @@ interface Props {
 }
 
 export const TokenTable = ({ tokens, addressInput }: Props) => {
+  const { space } = useContext(AppContext);
+  let scan_url = "https://www.confluxscan.io/";
+  if (space === "EVM") {
+    scan_url = "https://evm.confluxscan.io/";
+  }
+  //
   const headers = [
     { name: "Txn Hash" },
     { name: "Contract" },
@@ -64,7 +73,7 @@ export const TokenTable = ({ tokens, addressInput }: Props) => {
               <td className="px-5 py-5 text-sm bg-white border-b border-gray-200">
                 <a
                   rel="noreferrer"
-                  href={`https://www.confluxscan.io/transaction/${token.transaction?.hash}`}
+                  href={`${scan_url}transaction/${token.transaction?.hash}`}
                   target="_blank"
                   className="relative block text-gray-700 hover:underline"
                 >
@@ -74,7 +83,7 @@ export const TokenTable = ({ tokens, addressInput }: Props) => {
               <td className="px-5 py-5 text-sm bg-white border-b border-gray-200">
                 <a
                   rel="noreferrer"
-                  href={`https://www.confluxscan.io/address/${token.transaction?.to}`}
+                  href={`${scan_url}address/${token.transaction?.to}`}
                   target="_blank"
                   className="relative flex text-gray-700 hover:underline"
                 >
@@ -89,12 +98,17 @@ export const TokenTable = ({ tokens, addressInput }: Props) => {
               <td className="px-5 py-5 text-sm bg-white border-b border-gray-200">
                 <a
                   rel="noreferrer"
-                  href={`https://www.confluxscan.io/address/${token?.spender?.address}`}
+                  href={`${scan_url}address/${format.hexAddress(
+                    token?.spender?.address || ""
+                  )}`}
                   target="_blank"
                   className="relative block text-gray-700 hover:underline"
                 >
                   {token?.spender?.name ||
-                    substring(20, token?.spender?.address || "")}
+                    substring(
+                      20,
+                      format.hexAddress(token?.spender?.address || "")
+                    )}
                 </a>
               </td>
               <td className="flex items-center gap-2 px-5 py-8 text-sm bg-white border-b border-gray-200">
@@ -108,7 +122,7 @@ export const TokenTable = ({ tokens, addressInput }: Props) => {
 
                 <a
                   rel="noreferrer"
-                  href={`https://www.confluxscan.io/token/${token?.transaction?.toTokenInfo?.address}`}
+                  href={`${scan_url}token/${token?.transaction?.toTokenInfo?.address}`}
                   target="_blank"
                   className="relative block text-gray-700 hover:underline"
                 >
@@ -118,6 +132,7 @@ export const TokenTable = ({ tokens, addressInput }: Props) => {
               </td>
               <td className="px-5 py-5 text-sm text-center bg-white border-b border-gray-200">
                 <Erc20TokenBalanceAllowance
+                  price={token.price}
                   symbol={token.name || token.symbol || ""}
                   balance={token?.balance?.toString() || "0"}
                   decimals={token.decimals || 18}

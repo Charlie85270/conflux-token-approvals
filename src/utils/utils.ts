@@ -176,12 +176,15 @@ export async function getTokenData(
       balance: 0,
     };
   }
+
   const token = tokenMapping[address];
+
   const userToken = userTokens.find(tok => tok.address === address);
 
   return {
     iconUrl: token.iconUrl,
     symbol: token.symbol,
+    price: userToken?.price,
     decimals: tokenInfos.decimals || token.decimals,
     totalSupply: tokenInfos.totalSupply || token.totalSupply,
     balance: userToken?.balance || 0,

@@ -1,7 +1,7 @@
 import { TokenData, TokenMapping, Transaction } from "../Interfaces";
 import { useContext, useEffect, useState } from "react";
 import { getFullTokenMapping, removeDoubleItem } from "../../../utils/utils";
-import { reqTransactions, reqUserCoreTokens } from "../../../services/httpReq";
+import { reqTransactions, reqUserTokens } from "../../../services/httpReq";
 import AppContext from "../../../AppContext";
 import { ERC1155, ERC20, ERC721 } from "../Abi";
 import TokenList from "./TokenList";
@@ -24,7 +24,7 @@ function TokensApprovals({ address }: Props) {
     setLoading(true);
     Promise.all([
       reqTransactions(address, space),
-      reqUserCoreTokens(address),
+      reqUserTokens(address, space),
       getFullTokenMapping(1029, "CORE"),
       getFullTokenMapping(1030, "EVM"),
     ])
