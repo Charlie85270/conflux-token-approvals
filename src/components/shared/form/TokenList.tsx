@@ -84,19 +84,19 @@ function TokenList({
                 );
               }
             } else {
-              const provider = new ethers.providers.Web3Provider(
-                //@ts-ignore
-                window.ethereum
+              const defaultProvider = new ethers.providers.JsonRpcProvider(
+                "https://evm.confluxrpc.com"
               );
-
-              const signer = provider.getSigner();
+              const signer = defaultProvider.getSigner(
+                "0xE8667043E2F7104196E9531330ADD20959B44B47"
+              );
 
               const contract = new ethers.Contract(
                 format.hexAddress(token.toContractInfo.address),
                 ERC20,
-                provider
+                defaultProvider
               );
-              console.log(contract);
+
               const signedContract = contract.connect(signer);
               if (!!signedContract.allowance) {
                 allowance = await signedContract.allowance(
