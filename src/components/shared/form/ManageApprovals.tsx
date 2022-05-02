@@ -44,9 +44,10 @@ export const ManageApprovals = ({
   const evmAccount = useEvmAccount();
 
   const totalAllowance =
-    totalSupply && allowance && parseInt(totalSupply) < allowance
+    BigInt(parseFloat(totalSupply?.toString() || "0")) <
+    BigInt(allowance?.toString() || "0")
       ? -1
-      : formatBalance(allowance?.toString(), decimal || 18, true);
+      : formatBalance(allowance?.toString(), decimal || 18, false);
   const connectWallet = async (connection?: () => Promise<void>) => {
     let connect = connection;
     if (!connect) {
@@ -180,7 +181,7 @@ export const ManageApprovals = ({
           <div className="flex items-center justify-between w-full">
             <div className="w-4/5 text-center">
               <p className="text-lg font-semibold text-blue-500">
-                {totalAllowance >= 0 ? totalAllowance : "∞"}
+                {totalAllowance !== -1 ? totalAllowance : "∞"}
               </p>
             </div>
             <button
