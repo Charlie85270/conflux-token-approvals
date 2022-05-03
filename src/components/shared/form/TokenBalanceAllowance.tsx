@@ -10,12 +10,12 @@ interface Props {
 }
 
 function Erc20TokenBalanceAllowance({ balance, decimals, price }: Props) {
-  const prices =
-    parseFloat(price || "1") *
-    parseFloat(
-      formatBalance((balance || 0 * 11)?.toString(), decimals || 18, false) ||
-        "0"
-    );
+  const price2format = BigInt(parseFloat(balance) * parseFloat(price || "0"));
+  const prices = formatBalance(
+    (price2format || 0)?.toString(),
+    decimals || 18,
+    false
+  );
 
   return (
     <div className="my-auto TokenBalance">
@@ -24,7 +24,7 @@ function Erc20TokenBalanceAllowance({ balance, decimals, price }: Props) {
           <p className="text-lg font-semibold">
             {formatBalance(balance?.toString(), decimals || 18, false)}{" "}
             <span className="text-sm font-light text-gray-400">
-              ({prices.toFixed(2)} $)
+              ({prices} $)
             </span>
           </p>
         </div>
