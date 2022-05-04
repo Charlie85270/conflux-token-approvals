@@ -6,7 +6,7 @@ import AppContext from "./AppContext";
 import TokensApprovals from "./components/shared/form/TokensApprovals";
 
 function App() {
-  const [hideZeroAllowance, setHideZeroAllowance] = useState<boolean>(false);
+  const [hideZeroAllowance, setHideZeroAllowance] = useState<boolean>(true);
 
   const [space, setSpace] = useState<"CORE" | "EVM">();
   const [inputAddress, setInputAddress] = useState<string>();

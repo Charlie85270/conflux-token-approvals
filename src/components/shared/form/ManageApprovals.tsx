@@ -47,6 +47,9 @@ export const ManageApprovals = ({
     BigInt(parseFloat(totalSupply?.toString() || "0")) <
     BigInt(allowance?.toString() || "0")
       ? -1
+      : parseFloat(formatBalance(allowance?.toString(), decimal || 18, true)) <
+        1
+      ? "<1"
       : formatBalance(allowance?.toString(), decimal || 18, false);
   const connectWallet = async (connection?: () => Promise<void>) => {
     let connect = connection;
@@ -80,6 +83,7 @@ export const ManageApprovals = ({
             from: account,
           });
           tx.wait().finally(() => {
+            console.log("oui");
             setIsLoading(false);
           });
         } catch (err) {
@@ -127,6 +131,7 @@ export const ManageApprovals = ({
             });
           })
           .catch((err: any) => {
+            console.log(err);
             setIsLoading(false);
           });
       }
@@ -210,8 +215,8 @@ export const ManageApprovals = ({
                 fill="currentColor"
               >
                 <path
-                  fill-rule="evenodd"
-                  clip-rule="evenodd"
+                  fillRule="evenodd"
+                  clipRule="evenodd"
                   d="M15.361 2.91158C16.5764 1.69614 18.547 1.69614 19.7625 2.91158L21.0884 4.23753C22.3039 5.45297 22.3039 7.4236 21.0884 8.63904L8.63904 21.0884C8.05536 21.6721 7.26373 22 6.43828 22H2.84882C2.38003 22 2 21.62 2 21.1512V17.5617C2 16.7363 2.32791 15.9446 2.91158 15.361L15.361 2.91158ZM18.5621 4.112C18.0096 3.55952 17.1138 3.55952 16.5614 4.112L14.2351 6.43828L17.5617 9.76491L19.888 7.43863C20.4405 6.88615 20.4405 5.99042 19.888 5.43794L18.5621 4.112ZM16.3613 10.9653L13.0347 7.6387L4.112 16.5614C3.84669 16.8267 3.69764 17.1865 3.69764 17.5617V20.3024H6.43828C6.81349 20.3024 7.17332 20.1533 7.43863 19.888L16.3613 10.9653Z"
                   fill="#030D45"
                 />
@@ -253,7 +258,7 @@ export const ManageApprovals = ({
                       cy="12"
                       r="10"
                       stroke="white"
-                      stroke-width="4"
+                      strokeWidth="4"
                     ></circle>
                     <path
                       className="opacity-75"

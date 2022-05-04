@@ -3,7 +3,7 @@ import { AppState } from "./AppState";
 
 export default React.createContext<AppState>({
   space: undefined,
-  hideZeroAllowance: false,
+  hideZeroAllowance: true,
   setHideZeroAllowance: (hide: boolean) => {},
   setSpace: (space?: "CORE" | "EVM") => {},
 });
