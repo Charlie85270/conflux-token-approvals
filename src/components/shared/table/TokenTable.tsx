@@ -28,7 +28,7 @@ export const TokenTable = ({ tokens, addressInput }: Props) => {
     {
       name: "Managed amount",
       tooltip:
-        "You can set/revoke the total amount allowed to be managed by a contract on a given token. Revoke will set the amount to 0.",
+        "For some contracts (cUSDT, cEHT,....), to modify your managed amount it's necessary to revoke it to 0 before.",
     },
   ];
 

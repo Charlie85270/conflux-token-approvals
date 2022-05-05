@@ -2,6 +2,7 @@ export const Footer = () => {
   const confluxLink = "https://confluxnetwork.org/en/";
   const confluxForumLink = "https://forum.conflux.fun/";
   const confluxScanLink = "https://confluxscan.io/";
+  const posLink = "https://www.conflux-pos-validators.com/";
   const githubRepoLink =
     "https://github.com/Charlie85270/conflux-token-approvals";
   const creditLink = "https://github.com/Charlie85270";
@@ -37,6 +38,15 @@ export const Footer = () => {
               className="hover:text-gray-700 "
             >
               Conflux Scan
+            </a>
+            <a
+              aria-current="page"
+              target="_blank"
+              href={posLink}
+              rel="noreferrer"
+              className="hover:text-gray-700 "
+            >
+              Conflux PoS pool validators
             </a>
           </nav>
           <div className="h-px mx-auto mt-4 rounded-full md:hidden w-11"></div>
