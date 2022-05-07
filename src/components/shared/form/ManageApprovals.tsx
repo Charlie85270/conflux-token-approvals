@@ -83,7 +83,6 @@ export const ManageApprovals = ({
             from: account,
           });
           tx.wait().finally(() => {
-            console.log("oui");
             setIsLoading(false);
           });
         } catch (err) {

@@ -115,7 +115,7 @@ function TokenList({
           }
 
           const spenderData = await reqContract(
-            data.object.spender || data.object.operator,
+            data.object.spender || data.object.operator || data.object.to,
             space
           );
 
@@ -140,7 +140,7 @@ function TokenList({
                 ? 10000000000000000000000000000000
                 : 0,
             //@ts-ignore
-            isApprovalsForAll: !token.contract.approve,
+            isApprovalsForAll: abi !== ERC20,
           };
         } catch (err) {
           console.log(err);
@@ -154,7 +154,14 @@ function TokenList({
     setTokens(
       hideZeroAllowance
         ? //@ts-ignore
-          completeData.filter(dt => dt.allowance > 0)
+          completeData.filter(dt =>
+            //@ts-ignore
+            typeof dt.allowance !== "boolean"
+              ? //@ts-ignore
+                dt.allowance > 0
+              : //@ts-ignore
+                dt.allowance === true
+          )
         : completeData || []
     );
     setLoading(false);

@@ -96,20 +96,22 @@ export const TokenTable = ({ tokens, addressInput }: Props) => {
                 </a>
               </td>
               <td className="px-5 py-5 text-sm bg-white border-b border-gray-200">
-                <a
-                  rel="noreferrer"
-                  href={`${scan_url}address/${format.hexAddress(
-                    token?.spender?.address || ""
-                  )}`}
-                  target="_blank"
-                  className="relative block text-gray-700 hover:underline"
-                >
-                  {token?.spender?.name ||
-                    substring(
-                      20,
-                      format.hexAddress(token?.spender?.address || "")
-                    )}
-                </a>
+                {token?.spender?.address && (
+                  <a
+                    rel="noreferrer"
+                    href={`${scan_url}address/${format.hexAddress(
+                      token?.spender?.address || ""
+                    )}`}
+                    target="_blank"
+                    className="relative block text-gray-700 hover:underline"
+                  >
+                    {token?.spender?.name ||
+                      substring(
+                        20,
+                        format.hexAddress(token?.spender?.address || "")
+                      )}
+                  </a>
+                )}
               </td>
               <td className="flex items-center gap-2 px-5 py-8 text-sm bg-white border-b border-gray-200">
                 <img
@@ -141,6 +143,7 @@ export const TokenTable = ({ tokens, addressInput }: Props) => {
               <td className="px-5 py-5 text-sm bg-white border-b border-gray-200">
                 {token.isApprovalsForAll ? (
                   <ManageAllApprovals
+                    allowance={token.allowance}
                     addressInput={addressInput}
                     spender={token.spender?.address}
                     tokenAddress={token.transaction?.toTokenInfo.address}

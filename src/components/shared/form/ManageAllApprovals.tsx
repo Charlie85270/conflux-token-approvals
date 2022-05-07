@@ -15,6 +15,7 @@ import { isSameAddress } from "../../../utils/utils";
 
 interface Props {
   spender?: string;
+  allowance: number;
   contractAddress?: string;
   tokenAddress?: string;
   decimal?: number;
@@ -26,6 +27,7 @@ export const ManageAllApprovals = ({
   tokenAddress,
   addressInput,
   spender,
+  allowance,
 }: Props) => {
   const { conflux } = useConflux();
   const { space } = useContext(AppContext);
@@ -60,7 +62,7 @@ export const ManageAllApprovals = ({
       try {
         await contract
           //@ts-ignore
-          .setApprovalForAll(spender, false)
+          .setApprovalForAll(spender, allowance === 0 ? true : false)
           .sendTransaction({
             from: account,
           });
@@ -107,13 +109,20 @@ export const ManageAllApprovals = ({
         {(space === "CORE" && coreAccount) ||
         (space === "EVM" && evmAccount) ? (
           <div className="flex w-full">
+            <div className="w-4/5 text-center">
+              <p className="text-lg font-semibold text-blue-500">
+                {allowance === 0 ? "0" : "∞"}
+              </p>
+            </div>
             <button
               type="button"
               onClick={() => revert()}
               disabled={!contractAddress || !tokenAddress}
-              className="inline-flex items-center px-4 py-2 text-sm font-semibold leading-6 text-white bg-red-500 rounded-md shadow"
+              className={`${
+                allowance === 0 ? "bg-green-500" : "bg-red-500"
+              } inline-flex items-center px-4 py-2 text-sm  font-semibold leading-6 text-white rounded-md shadow`}
             >
-              Revoke
+              {allowance === 0 ? "Approve" : "Revoke"}
             </button>
           </div>
         ) : (
