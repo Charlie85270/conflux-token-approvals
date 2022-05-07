@@ -6,10 +6,16 @@ interface Props {
   totalSupply?: string;
   decimals: number;
   price?: string;
+  transferType?: string;
   allowance?: number;
 }
 
-function Erc20TokenBalanceAllowance({ balance, decimals, price }: Props) {
+function Erc20TokenBalanceAllowance({
+  balance,
+  decimals,
+  price,
+  transferType,
+}: Props) {
   const price2format = BigInt(parseFloat(balance) * parseFloat(price || "0"));
   const prices = formatBalance(
     (price2format || 0)?.toString(),
@@ -22,7 +28,9 @@ function Erc20TokenBalanceAllowance({ balance, decimals, price }: Props) {
       <div className="flex justify-center">
         <div className="flex flex-col">
           <p className="text-lg font-semibold">
-            {formatBalance(balance?.toString(), decimals || 18, false)}{" "}
+            {transferType === "ERC20"
+              ? formatBalance(balance?.toString(), decimals || 18, false)
+              : balance}{" "}
             <span className="text-sm font-light text-gray-400">
               ({prices} $)
             </span>

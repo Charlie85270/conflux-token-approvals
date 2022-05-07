@@ -6,7 +6,7 @@ import {
   TokenMapping,
   Transaction,
 } from "../Interfaces";
-import { ERC20 } from "../Abi";
+import { ERC20, ERC721 } from "../Abi";
 import { useConflux } from "../../../hooks/useConflux";
 import {
   reqDetailTransaction,
@@ -73,14 +73,14 @@ function TokenList({
                 //@ts-ignore
                 allowance = await token.contract.allowance(
                   inputAddress,
-                  data.object.spender
+                  data.object.spender || data.object.operator || data.object.to
                 );
                 //@ts-ignore
               } else if (!!token.contract.isApprovedForAll) {
                 //@ts-ignore
                 allowance = await token.contract.isApprovedForAll(
                   inputAddress,
-                  data.object.operator
+                  data.object.spender || data.object.operator || data.object.to
                 );
               }
             } else {
@@ -106,7 +106,7 @@ function TokenList({
               } else if (!!signedContract.isApprovedForAll) {
                 allowance = await signedContract.isApprovedForAll(
                   inputAddress,
-                  data.object.operator
+                  data.object.spender || data.object.operator || data.object.to
                 );
               }
             }
@@ -120,7 +120,7 @@ function TokenList({
           );
 
           const tokenData = await getTokenData(
-            token.toTokenInfo.address,
+            abi === ERC721 ? spenderData.address : token.toTokenInfo.address,
             tokenInfos,
             userTokens,
             tokenMapping

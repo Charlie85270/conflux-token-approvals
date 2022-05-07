@@ -168,25 +168,21 @@ export async function getTokenData(
   userTokens: TokenData[],
   tokenMapping?: TokenMapping
 ) {
-  if (!tokenMapping || !tokenMapping[address]) {
-    return {
-      symbol: "",
-      decimals: 0,
-      totalSupply: 0,
-      balance: 0,
-    };
-  }
-
-  const token = tokenMapping[address];
+  const token = tokenMapping && tokenMapping[address];
 
   const userToken = userTokens.find(tok => tok.address === address);
 
+  console.log(address);
+  console.log(userTokens);
+  console.log(userToken);
+
   return {
-    iconUrl: token.iconUrl,
-    symbol: token.symbol,
+    iconUrl: token?.iconUrl,
+    symbol: token?.symbol || userToken?.symbol,
     price: userToken?.price,
-    decimals: tokenInfos.decimals || token.decimals,
-    totalSupply: tokenInfos.totalSupply || token.totalSupply,
+    decimals: tokenInfos.decimals || token?.decimals || userToken?.decimals,
+    totalSupply:
+      tokenInfos.totalSupply || token?.totalSupply || userToken?.totalSupply,
     balance: userToken?.balance || 0,
   };
 }

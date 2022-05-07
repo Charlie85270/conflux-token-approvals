@@ -99,16 +99,20 @@ export const TokenTable = ({ tokens, addressInput }: Props) => {
                 {token?.spender?.address && (
                   <a
                     rel="noreferrer"
-                    href={`${scan_url}address/${format.hexAddress(
-                      token?.spender?.address || ""
-                    )}`}
+                    href={`${scan_url}address/${
+                      space === "EVM"
+                        ? format.hexAddress(token?.spender?.address || "")
+                        : token?.spender?.address
+                    }`}
                     target="_blank"
                     className="relative block text-gray-700 hover:underline"
                   >
                     {token?.spender?.name ||
                       substring(
                         20,
-                        format.hexAddress(token?.spender?.address || "")
+                        space === "EVM"
+                          ? format.hexAddress(token?.spender?.address || "")
+                          : token?.spender?.address
                       )}
                   </a>
                 )}
@@ -135,6 +139,7 @@ export const TokenTable = ({ tokens, addressInput }: Props) => {
               <td className="px-5 py-5 text-sm text-center bg-white border-b border-gray-200">
                 <Erc20TokenBalanceAllowance
                   price={token.price}
+                  transferType={token.transferType || "ERC20"}
                   symbol={token.name || token.symbol || ""}
                   balance={token?.balance?.toString() || "0"}
                   decimals={token.decimals || 18}

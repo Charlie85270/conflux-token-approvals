@@ -73,6 +73,7 @@ export interface TokenInfos {
   balance?: string | number;
   totalSupply?: string;
   isApprovalsForAll?: boolean;
+  transferType?: string;
 }
 
 export interface Allowance {
