@@ -172,10 +172,6 @@ export async function getTokenData(
 
   const userToken = userTokens.find(tok => tok.address === address);
 
-  console.log(address);
-  console.log(userTokens);
-  console.log(userToken);
-
   return {
     iconUrl: token?.iconUrl,
     symbol: token?.symbol || userToken?.symbol,

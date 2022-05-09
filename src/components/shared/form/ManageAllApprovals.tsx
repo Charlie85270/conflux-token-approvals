@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { useConflux } from "../../../hooks/useConflux";
-import { ERC1155 } from "../Abi";
+import { ERC1155, ERC721 } from "../Abi";
 import {
   useAccount as useFluentAccount,
   connect as connectFluent,
@@ -20,6 +20,7 @@ interface Props {
   tokenAddress?: string;
   decimal?: number;
   addressInput?: string;
+  tokenId?: string;
 }
 
 export const ManageAllApprovals = ({
@@ -28,6 +29,7 @@ export const ManageAllApprovals = ({
   addressInput,
   spender,
   allowance,
+  tokenId,
 }: Props) => {
   const { conflux } = useConflux();
   const { space } = useContext(AppContext);
@@ -56,16 +58,31 @@ export const ManageAllApprovals = ({
       conflux.provider = window.conflux;
       const contract = conflux.Contract({
         address: contractAddress,
-        abi: ERC1155,
+        abi: tokenId ? ERC721 : ERC1155,
       });
 
       try {
-        await contract
-          //@ts-ignore
-          .setApprovalForAll(spender, allowance === 0 ? true : false)
-          .sendTransaction({
-            from: account,
-          });
+        //@ts-ignore
+        if (contract.getApproved) {
+          await contract
+            //@ts-ignore
+            .approve(
+              allowance === 0
+                ? spender
+                : "cfx:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa0sfbnjm2",
+              tokenId
+            )
+            .sendTransaction({
+              from: account,
+            });
+        } else {
+          await contract
+            //@ts-ignore
+            .setApprovalForAll(spender, allowance === 0 ? true : false)
+            .sendTransaction({
+              from: account,
+            });
+        }
       } catch (err) {
         console.log(err);
       }

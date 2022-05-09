@@ -149,6 +149,7 @@ export const TokenTable = ({ tokens, addressInput }: Props) => {
                 {token.isApprovalsForAll ? (
                   <ManageAllApprovals
                     allowance={token.allowance}
+                    tokenId={token.tokenId}
                     addressInput={addressInput}
                     spender={token.spender?.address}
                     tokenAddress={token.transaction?.toTokenInfo.address}

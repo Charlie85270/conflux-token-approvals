@@ -66,6 +66,7 @@ function TokenList({
           const data = await token.contract.abi.decodeData(dataToDecode.data);
           const tokenInfos = await reqToken(token.toTokenInfo.address, space);
           let allowance = 0;
+          let tokenId = null;
           try {
             if (space === "CORE") {
               //@ts-ignore
@@ -78,10 +79,26 @@ function TokenList({
                 //@ts-ignore
               } else if (!!token.contract.isApprovedForAll) {
                 //@ts-ignore
-                allowance = await token.contract.isApprovedForAll(
-                  inputAddress,
-                  data.object.spender || data.object.operator || data.object.to
-                );
+                if (token.contract.getApproved) {
+                  tokenId = data.object.tokenId;
+                  //@ts-ignore
+                  const addresseAllow = await token.contract.getApproved(
+                    data.object.tokenId
+                  );
+                  allowance =
+                    addresseAllow ===
+                    "cfx:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa0sfbnjm2"
+                      ? 0
+                      : 1;
+                } else {
+                  //@ts-ignore
+                  allowance = await token.contract.isApprovedForAll(
+                    inputAddress,
+                    data.object.spender ||
+                      data.object.operator ||
+                      data.object.to
+                  );
+                }
               }
             } else {
               const defaultProvider = new ethers.providers.JsonRpcProvider(
@@ -128,6 +145,7 @@ function TokenList({
 
           return {
             ...tokenData,
+            tokenId,
             transactionHash: token.hash,
             iconUrl: tokenInfos.iconUrl || tokenData.iconUrl,
             spender: { name: spenderData.name, address: spenderData.address },
