@@ -50,7 +50,7 @@ function App() {
               </h1>
               <h2 className="px-8 m-2 text-xl text-center text-gray-200">
                 Check and verify your tokens approvals on the Core and eSpace of
-                the conflux network
+                the Conflux Network
               </h2>
             </div>
             <div className="absolute w-4/5 m-auto transform -translate-x-1/2 md:w-3/5 left-1/2 -bottom-20">
