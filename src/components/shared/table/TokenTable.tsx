@@ -134,12 +134,21 @@ export const TokenTable = ({ tokens, addressInput }: Props) => {
                 >
                   {token.transaction?.toTokenInfo.symbol ||
                     token.transaction?.toTokenInfo.name}
+
+                  <span className="text-xs font-bold">
+                    {token.tokenType === "ERC721"
+                      ? token.tokenId
+                        ? `(id: ${token.tokenId})`
+                        : `(ALL)`
+                      : null}
+                  </span>
                 </a>
               </td>
               <td className="px-5 py-5 text-sm text-center bg-white border-b border-gray-200">
                 <Erc20TokenBalanceAllowance
+                  tokenId={token.tokenId}
                   price={token.price}
-                  transferType={token.transferType || "ERC20"}
+                  transferType={token.tokenType || "ERC20"}
                   symbol={token.name || token.symbol || ""}
                   balance={token?.balance?.toString() || "0"}
                   decimals={token.decimals || 18}

@@ -69,12 +69,12 @@ export interface TokenInfos {
   transaction?: Transaction;
   spender?: { name: string; address: string };
   name?: string;
-  allowance?: any;
+  allowance?: number | boolean | string;
   decimals?: number;
   balance?: string | number;
   totalSupply?: string;
   isApprovalsForAll?: boolean;
-  transferType?: string;
+  tokenType?: string;
 }
 
 export interface Allowance {

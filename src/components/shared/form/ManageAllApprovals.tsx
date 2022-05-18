@@ -15,7 +15,7 @@ import { isSameAddress } from "../../../utils/utils";
 
 interface Props {
   spender?: string;
-  allowance: number;
+  allowance: string | number | boolean | undefined;
   contractAddress?: string;
   tokenAddress?: string;
   decimal?: number;
@@ -67,7 +67,7 @@ export const ManageAllApprovals = ({
           await contract
             //@ts-ignore
             .approve(
-              allowance === 0
+              allowance === false || allowance === 0
                 ? spender
                 : "cfx:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa0sfbnjm2",
               tokenId
@@ -78,7 +78,10 @@ export const ManageAllApprovals = ({
         } else {
           await contract
             //@ts-ignore
-            .setApprovalForAll(spender, allowance === 0 ? true : false)
+            .setApprovalForAll(
+              spender,
+              allowance === false || allowance === 0 ? true : false
+            )
             .sendTransaction({
               from: account,
             });
@@ -120,6 +123,8 @@ export const ManageAllApprovals = ({
   ) {
     return <p>You're not the owner of this address</p>;
   }
+  const approveLabel = tokenId ? "Approve" : "Approve all";
+  const revokeLabel = tokenId ? "Revoke" : "Revoke all";
   return (
     <div className="flex flex-col items-center gap-2">
       <div className="flex w-full">
@@ -128,7 +133,7 @@ export const ManageAllApprovals = ({
           <div className="flex w-full">
             <div className="w-4/5 text-center">
               <p className="text-lg font-semibold text-blue-500">
-                {allowance === 0 ? "0" : "∞"}
+                {allowance === false || allowance === 0 ? "0" : "∞"}
               </p>
             </div>
             <button
@@ -136,10 +141,14 @@ export const ManageAllApprovals = ({
               onClick={() => revert()}
               disabled={!contractAddress || !tokenAddress}
               className={`${
-                allowance === 0 ? "bg-green-500" : "bg-red-500"
-              } inline-flex items-center px-4 py-2 text-sm  font-semibold leading-6 text-white rounded-md shadow`}
+                allowance === false || allowance === 0
+                  ? "bg-green-500"
+                  : "bg-red-500"
+              }  w-44 text-center px-4 py-2 text-sm font-semibold leading-6 text-white rounded-md shadow`}
             >
-              {allowance === 0 ? "Approve" : "Revoke"}
+              {allowance === false || allowance === 0
+                ? approveLabel
+                : revokeLabel}
             </button>
           </div>
         ) : (

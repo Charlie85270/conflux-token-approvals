@@ -24,7 +24,7 @@ interface Props {
   decimal?: number;
   addressInput?: string;
   totalSupply?: string;
-  allowance?: number;
+  allowance?: string | number | boolean | undefined;
 }
 
 export const ManageApprovals = ({
@@ -44,8 +44,10 @@ export const ManageApprovals = ({
   const evmAccount = useEvmAccount();
 
   const totalAllowance =
-    BigInt(parseFloat(totalSupply?.toString() || "0")) <
-    BigInt(allowance?.toString() || "0")
+    typeof allowance === "boolean"
+      ? allowance
+      : BigInt(parseFloat(totalSupply?.toString() || "0")) <
+        BigInt(allowance?.toString() || "0")
       ? -1
       : parseFloat(formatBalance(allowance?.toString(), decimal || 18, true)) <
         1
@@ -185,7 +187,9 @@ export const ManageApprovals = ({
           <div className="flex items-center justify-between w-full">
             <div className="w-4/5 text-center">
               <p className="text-lg font-semibold text-blue-500">
-                {totalAllowance !== -1 ? totalAllowance : "∞"}
+                {totalAllowance !== -1 && totalAllowance !== false
+                  ? totalAllowance
+                  : "∞"}
               </p>
             </div>
             <button

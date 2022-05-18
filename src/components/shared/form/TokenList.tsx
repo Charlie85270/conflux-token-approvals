@@ -60,7 +60,6 @@ function TokenList({
     const completeData = await Promise.all(
       transactionsWithContractInfos.map(async token => {
         const dataToDecode = await reqDetailTransaction(token.hash, space);
-        //@ts-ignore
 
         try {
           const data = await token.contract.abi.decodeData(dataToDecode.data);
@@ -79,8 +78,9 @@ function TokenList({
                 //@ts-ignore
               } else if (!!token.contract.isApprovedForAll) {
                 //@ts-ignore
-                if (token.contract.getApproved) {
+                if (token.contract.getApproved && data.object.tokenId) {
                   tokenId = data.object.tokenId;
+
                   //@ts-ignore
                   const addresseAllow = await token.contract.getApproved(
                     data.object.tokenId
@@ -146,17 +146,13 @@ function TokenList({
           return {
             ...tokenData,
             tokenId,
+            tokenType: token.toTokenInfo.tokenType,
             transactionHash: token.hash,
             iconUrl: tokenInfos.iconUrl || tokenData.iconUrl,
             spender: { name: spenderData.name, address: spenderData.address },
             transaction: token,
             name: token.toContractInfo.name || `${token.toTokenInfo.name}`,
-            allowance:
-              typeof allowance !== "boolean"
-                ? allowance
-                : allowance
-                ? 10000000000000000000000000000000
-                : 0,
+            allowance,
             //@ts-ignore
             isApprovalsForAll: abi !== ERC20,
           };

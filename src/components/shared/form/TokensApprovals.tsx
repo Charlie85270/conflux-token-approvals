@@ -5,6 +5,7 @@ import { reqTransactions, reqUserTokens } from "../../../services/httpReq";
 import AppContext from "../../../AppContext";
 import { ERC1155, ERC20, ERC721 } from "../Abi";
 import TokenList from "./TokenList";
+import { useConflux } from "../../../hooks/useConflux";
 
 interface Props {
   address?: string;
@@ -16,7 +17,7 @@ function TokensApprovals({ address }: Props) {
   const [userTokens, setUserTokens] = useState<TokenData[]>([]);
   const [isLoading, setLoading] = useState<boolean>(false);
   const { space } = useContext(AppContext);
-
+  const { conflux } = useConflux();
   const loadData = (address: string) => {
     if (!space) {
       return null;
@@ -28,20 +29,26 @@ function TokensApprovals({ address }: Props) {
       getFullTokenMapping(1029, "CORE"),
       getFullTokenMapping(1030, "EVM"),
     ])
-      .then(data => {
+      .then(async data => {
         setUserTokens(data[1].list);
         setTokenMapping({ ...data[2], ...data[3] });
-        setTransactions(
-          removeDoubleItem(
-            data[0].list.filter(
-              tx =>
-                tx.method === "approve(address,uint256)" ||
-                tx.method === "setApprovalForAll(address,bool)"
-            )
-          )
-        );
+        removeDoubleItem(
+          data[0].list.filter(
+            tx =>
+              tx.method === "approve(address,uint256)" ||
+              tx.method === "setApprovalForAll(address,bool)"
+          ),
+          space,
+          conflux
+        )
+          .then(txs => {
+            setTransactions(txs);
+          })
+          .finally(() => {
+            setLoading(false);
+          });
       })
-      .finally(() => {
+      .catch(() => {
         setLoading(false);
       });
   };
