@@ -18,7 +18,9 @@ function Erc20TokenBalanceAllowance({
   transferType,
   tokenId,
 }: Props) {
-  const price2format = BigInt(parseFloat(balance) * parseFloat(price || "0"));
+  const price2format = (parseFloat(balance) * parseFloat(price || "0")).toFixed(
+    0
+  );
   const prices = formatBalance(
     (price2format || 0)?.toString(),
     decimals || 18,
