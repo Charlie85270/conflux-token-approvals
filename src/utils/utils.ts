@@ -345,7 +345,7 @@ export const isSameAddress = (address1?: string, address2?: string) => {
   return (
     address1 &&
     address2 &&
-    address1?.toLocaleLowerCase() !== address2?.toLocaleLowerCase()
+    address1?.toLocaleLowerCase() === address2?.toLocaleLowerCase()
   );
 };
 
