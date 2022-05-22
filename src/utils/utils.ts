@@ -11,13 +11,6 @@ import {
 import { ERC1155, ERC20, ERC721 } from "../components/shared/Abi";
 import { reqDetailTransaction } from "../services/httpReq";
 
-interface NestedObjectERC20 {
-  [key: string]: { [key: string]: boolean };
-}
-interface NestedObject {
-  [key: string]: { [key: string]: string[] };
-}
-
 // Check if a token is registered in the token mapping
 export function isRegistered(
   tokenAddress: string,
@@ -154,8 +147,10 @@ export const removeDoubleItem = async (
   conflux: Conflux
 ) => {
   const erc20approversList: { spender: string; tokens: string[] }[] = [];
-  const erc721approversList: { tokenAddress: string; tokenIds: string[] }[] =
-    [];
+  const erc721approversList: {
+    tokenOperator: string;
+    tokenIds: string[];
+  }[] = [];
   const finalList: Transaction[] = [];
 
   for (const item of list) {
@@ -174,8 +169,8 @@ export const removeDoubleItem = async (
     });
     const data = await contract.abi.decodeData(dataToDecode.data);
     const spender =
-      data.object.spender || data.object.operator || data.object.to;
-    const tokenId = data.object?.tokenId && data.object?.tokenId[0];
+      data.object.operator || data.object.spender || data.object.to;
+    const tokenId = (data.object?.tokenId && data.object?.tokenId[0]) || "all";
 
     /**
      * Filter ERC20 transactions
@@ -213,10 +208,10 @@ export const removeDoubleItem = async (
      */
     if (item.toTokenInfo.tokenType === "ERC721") {
       const currentTokenAddress = erc721approversList.find(
-        token => token.tokenAddress === item.toTokenInfo.address
+        token => token.tokenOperator === spender
       );
       const index = erc721approversList.findIndex(
-        token => token.tokenAddress === item.toTokenInfo.address
+        token => token.tokenOperator === spender
       );
       //it's a new approver or new token
       if (
@@ -224,13 +219,14 @@ export const removeDoubleItem = async (
         !currentTokenAddress.tokenIds?.includes(tokenId)
       ) {
         finalList.push(item);
+
         if (currentTokenAddress) {
           erc721approversList[index].tokenIds = (
             erc721approversList[index].tokenIds || []
           ).concat([tokenId]);
         } else {
           erc721approversList.push({
-            tokenAddress: item.toTokenInfo.address,
+            tokenOperator: spender,
             tokenIds: [tokenId],
           });
         }
@@ -239,106 +235,6 @@ export const removeDoubleItem = async (
   }
 
   return finalList;
-};
-
-export const removeDoubleItemNew = (
-  list: Transaction[],
-  space: "CORE" | "EVM",
-  conflux: Conflux
-) => {
-  let alreadyHave: NestedObjectERC20 = {};
-  const allValidTransactionList: Transaction[] = [];
-  const allApprovalAllValidTransactionList: Transaction[] = [];
-  const finalList: Transaction[] = [];
-
-  let nftApproval: NestedObject = {};
-  const nftAllApproved: { [key: string]: boolean } = {};
-
-  list.forEach(async item => {
-    const dataToDecode = await reqDetailTransaction(item.hash, space);
-    const contract = conflux.Contract({
-      address: item.toContractInfo.address,
-      abi:
-        item.toTokenInfo.tokenType === "ERC721"
-          ? ERC721
-          : item.toTokenInfo.tokenType === "ERC20"
-          ? ERC20
-          : ERC1155,
-    });
-
-    const data = await contract.abi.decodeData(dataToDecode.data);
-    const spender =
-      data.object.spender || data.object.operator || data.object.to;
-    const tokenId = data.object?.tokenId && data.object?.tokenId[0];
-    const approved = data.object?.approved;
-
-    if (item.toTokenInfo.tokenType !== "ERC721") {
-      if (
-        !alreadyHave[spender] ||
-        !alreadyHave[spender][item.toTokenInfo.address]
-      ) {
-        allValidTransactionList.push(item);
-        alreadyHave = {
-          ...alreadyHave,
-          [spender]: { [item.toTokenInfo.address]: true },
-        };
-      }
-    } else {
-      //ERC21
-      if (
-        (tokenId && !nftApproval[spender]) ||
-        (nftApproval[spender] &&
-          !nftApproval[spender][item.toTokenInfo.address].includes(tokenId))
-      ) {
-        nftApproval = {
-          ...nftApproval,
-          [spender]: {
-            [item.toTokenInfo.address]: (
-              (nftApproval &&
-                nftApproval[spender] &&
-                nftApproval[spender][item.toTokenInfo.address]) ||
-              []
-            ).concat([tokenId]),
-          },
-        };
-
-        allValidTransactionList.push(item);
-      }
-
-      if (!tokenId && nftAllApproved[item.toTokenInfo.address] === undefined) {
-        if (approved) {
-          nftAllApproved[item.toTokenInfo.address] = approved;
-          allApprovalAllValidTransactionList.push(item);
-        }
-      }
-    }
-  });
-
-  // If a spender has allApproved a ERC721 token, we remove all "simple" approved transactions
-  // allValidTransactionList.forEach(item => {
-  //   if (item.toTokenInfo.tokenType === "ERC721") {
-  //     if (
-  //       !nftAllApproved[item.toTokenInfo.address] ||
-  //       nftAllApproved[item.toTokenInfo.address] !== true
-  //     ) {
-  //       finalList.push(item);
-  //     }
-  //   }
-  // });
-
-  return allValidTransactionList;
-};
-
-export const removeERC20DoubleItem = (list: Transaction[]) => {
-  const alreadyHave: string[] = [];
-  const allValidTransactionList: Transaction[] = [];
-  list.forEach(item => {
-    if (alreadyHave.indexOf(item.toTokenInfo.address) === -1) {
-      allValidTransactionList.push(item);
-      alreadyHave.push(item.toTokenInfo.address);
-    }
-  });
-  return allValidTransactionList;
 };
 
 export const isSameAddress = (address1?: string, address2?: string) => {

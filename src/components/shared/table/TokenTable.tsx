@@ -44,7 +44,7 @@ export const TokenTable = ({ tokens, addressInput }: Props) => {
             <th
               key={hd.name + index}
               scope="col"
-              className="px-5 py-3 font-normal text-left text-gray-800 uppercase bg-white border-b border-gray-200 text-md"
+              className="px-5 py-3 font-normal text-left text-gray-800 uppercase bg-white text-md"
             >
               {hd.name}
               {hd.tooltip && (
@@ -69,8 +69,11 @@ export const TokenTable = ({ tokens, addressInput }: Props) => {
       <tbody>
         {tokens.map((token, index) => {
           return (
-            <tr key={(token.name || "") + index}>
-              <td className="px-5 py-5 text-sm bg-white border-b border-gray-200">
+            <tr
+              key={(token.name || "") + index}
+              className="border-b border-gray-200"
+            >
+              <td className="px-5 py-5 text-sm bg-white ">
                 <a
                   rel="noreferrer"
                   href={`${scan_url}transaction/${token.transaction?.hash}`}
@@ -80,7 +83,7 @@ export const TokenTable = ({ tokens, addressInput }: Props) => {
                   {substring(20, token.transaction?.hash || "")}
                 </a>
               </td>
-              <td className="px-5 py-5 text-sm bg-white border-b border-gray-200">
+              <td className="px-5 py-5 text-sm bg-white ">
                 <a
                   rel="noreferrer"
                   href={`${scan_url}address/${token.transaction?.to}`}
@@ -95,7 +98,7 @@ export const TokenTable = ({ tokens, addressInput }: Props) => {
                   {substring(25, token.name || "")}
                 </a>
               </td>
-              <td className="px-5 py-5 text-sm bg-white border-b border-gray-200">
+              <td className="px-5 py-5 text-sm bg-white ">
                 {token?.spender?.address && (
                   <a
                     rel="noreferrer"
@@ -117,7 +120,7 @@ export const TokenTable = ({ tokens, addressInput }: Props) => {
                   </a>
                 )}
               </td>
-              <td className="flex items-center gap-2 px-5 py-8 text-sm bg-white border-b border-gray-200">
+              <td className="flex items-center gap-2 px-5 py-8 text-sm bg-white ">
                 <img
                   src={
                     token.iconUrl ||
@@ -144,7 +147,7 @@ export const TokenTable = ({ tokens, addressInput }: Props) => {
                   </span>
                 </a>
               </td>
-              <td className="px-5 py-5 text-sm text-center bg-white border-b border-gray-200">
+              <td className="px-5 py-5 text-sm text-center bg-white ">
                 <Erc20TokenBalanceAllowance
                   tokenId={token.tokenId}
                   price={token.price}
@@ -154,7 +157,7 @@ export const TokenTable = ({ tokens, addressInput }: Props) => {
                   decimals={token.decimals || 18}
                 />
               </td>
-              <td className="px-5 py-5 text-sm bg-white border-b border-gray-200">
+              <td className="px-5 py-5 text-sm bg-white ">
                 {token.isApprovalsForAll ? (
                   <ManageAllApprovals
                     allowance={token.allowance}

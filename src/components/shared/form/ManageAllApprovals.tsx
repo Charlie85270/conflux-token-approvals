@@ -114,15 +114,10 @@ export const ManageAllApprovals = ({
   if (space === "EVM" && !window.ethereum) {
     return <p>Install Metamask wallet to continue</p>;
   }
+  const isSameAddresses =
+    (coreAccount && isSameAddress(addressInput, coreAccount)) ||
+    (evmAccount && isSameAddress(addressInput, evmAccount));
 
-  if (
-    coreAccount &&
-    !isSameAddress(addressInput, coreAccount) &&
-    evmAccount &&
-    !isSameAddress(addressInput, evmAccount)
-  ) {
-    return <p>You're not the owner of this address</p>;
-  }
   const approveLabel = tokenId ? "Approve" : "Approve all";
   const revokeLabel = tokenId ? "Revoke" : "Revoke all";
   return (
@@ -136,20 +131,24 @@ export const ManageAllApprovals = ({
                 {allowance === false || allowance === 0 ? "0" : "∞"}
               </p>
             </div>
-            <button
-              type="button"
-              onClick={() => revert()}
-              disabled={!contractAddress || !tokenAddress}
-              className={`${
-                allowance === false || allowance === 0
-                  ? "bg-green-500"
-                  : "bg-red-500"
-              }  w-44 text-center px-4 py-2 text-sm font-semibold leading-6 text-white rounded-md shadow`}
-            >
-              {allowance === false || allowance === 0
-                ? approveLabel
-                : revokeLabel}
-            </button>
+            {isSameAddresses ? (
+              <button
+                type="button"
+                onClick={() => revert()}
+                disabled={!contractAddress || !tokenAddress}
+                className={`${
+                  allowance === false || allowance === 0
+                    ? "bg-green-500"
+                    : "bg-red-500"
+                }  w-44 text-center px-4 py-2 text-sm font-semibold leading-6 text-white rounded-md shadow`}
+              >
+                {allowance === false || allowance === 0
+                  ? approveLabel
+                  : revokeLabel}
+              </button>
+            ) : (
+              <p>You're not the owner of this address</p>
+            )}
           </div>
         ) : (
           <button
