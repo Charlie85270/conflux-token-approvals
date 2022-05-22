@@ -168,10 +168,10 @@ export const removeDoubleItem = async (
           : ERC1155,
     });
     const data = await contract.abi.decodeData(dataToDecode.data);
-    const spender =
-      data.object.operator || data.object.spender || data.object.to;
-    const tokenId = (data.object?.tokenId && data.object?.tokenId[0]) || "all";
 
+    const tokenId = (data.object?.tokenId && data.object?.tokenId[0]) || "all";
+    const spender =
+      data.object.spender || data.object.operator || data.object.to;
     /**
      * Filter ERC20 transactions
      */
@@ -208,10 +208,14 @@ export const removeDoubleItem = async (
      */
     if (item.toTokenInfo.tokenType === "ERC721") {
       const currentTokenAddress = erc721approversList.find(
-        token => token.tokenOperator === spender
+        token =>
+          token.tokenOperator ===
+          (tokenId !== "all" ? item.toTokenInfo.address : spender)
       );
       const index = erc721approversList.findIndex(
-        token => token.tokenOperator === spender
+        token =>
+          token.tokenOperator ===
+          (tokenId !== "all" ? item.toTokenInfo.address : spender)
       );
       //it's a new approver or new token
       if (
@@ -226,7 +230,10 @@ export const removeDoubleItem = async (
           ).concat([tokenId]);
         } else {
           erc721approversList.push({
-            tokenOperator: spender,
+            tokenOperator:
+              tokenId !== "all"
+                ? item.toTokenInfo.address
+                : data.object.operator,
             tokenIds: [tokenId],
           });
         }
