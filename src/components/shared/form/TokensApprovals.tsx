@@ -30,6 +30,7 @@ function TokensApprovals({ address }: Props) {
       getFullTokenMapping(1030, "EVM"),
     ])
       .then(async data => {
+        console.log(data[0].list);
         setUserTokens(data[1].list);
         setTokenMapping({ ...data[2], ...data[3] });
         removeDoubleItem(

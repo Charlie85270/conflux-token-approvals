@@ -158,84 +158,87 @@ export const removeDoubleItem = async (
      * Get transactions details
      */
     const dataToDecode = await reqDetailTransaction(item.hash, space);
-    const contract = conflux.Contract({
-      address: item.toContractInfo.address,
-      abi:
-        item.toTokenInfo.tokenType === "ERC721"
-          ? ERC721
-          : item.toTokenInfo.tokenType === "ERC20"
-          ? ERC20
-          : ERC1155,
-    });
-    const data = await contract.abi.decodeData(dataToDecode.data);
+    if (item.toContractInfo) {
+      const contract = conflux.Contract({
+        address: item.toContractInfo.address,
+        abi:
+          item.toTokenInfo.tokenType === "ERC721"
+            ? ERC721
+            : item.toTokenInfo.tokenType === "ERC20"
+            ? ERC20
+            : ERC1155,
+      });
+      const data = await contract.abi.decodeData(dataToDecode.data);
 
-    const tokenId = (data.object?.tokenId && data.object?.tokenId[0]) || "all";
-    const spender =
-      data.object.spender || data.object.operator || data.object.to;
-    /**
-     * Filter ERC20 transactions
-     */
-    if (
-      item.toTokenInfo.tokenType === "ERC20" ||
-      item.toTokenInfo.tokenType === "ERC1155"
-    ) {
-      const currentApprover = erc20approversList.find(
-        approver => approver.spender === spender
-      );
-      const index = erc20approversList.findIndex(
-        approver => approver.spender === spender
-      );
-      //it's a new approver or new token
+      const tokenId =
+        (data?.object?.tokenId && data?.object?.tokenId[0]) || "all";
+      const spender =
+        data?.object.spender || data?.object.operator || data?.object.to;
+      /**
+       * Filter ERC20 transactions
+       */
       if (
-        !currentApprover ||
-        !currentApprover.tokens?.includes(item.toTokenInfo.address)
+        item.toTokenInfo.tokenType === "ERC20" ||
+        item.toTokenInfo.tokenType === "ERC1155"
       ) {
-        finalList.push(item);
-        if (currentApprover) {
-          erc20approversList[index].tokens = (
-            erc20approversList[index].tokens || []
-          ).concat([item.toTokenInfo.address]);
-        } else {
-          erc20approversList.push({
-            spender,
-            tokens: [item.toTokenInfo.address],
-          });
+        const currentApprover = erc20approversList.find(
+          approver => approver.spender === spender
+        );
+        const index = erc20approversList.findIndex(
+          approver => approver.spender === spender
+        );
+        //it's a new approver or new token
+        if (
+          !currentApprover ||
+          !currentApprover.tokens?.includes(item.toTokenInfo.address)
+        ) {
+          finalList.push(item);
+          if (currentApprover) {
+            erc20approversList[index].tokens = (
+              erc20approversList[index].tokens || []
+            ).concat([item.toTokenInfo.address]);
+          } else {
+            erc20approversList.push({
+              spender,
+              tokens: [item.toTokenInfo.address],
+            });
+          }
         }
       }
-    }
-    /**
-     * Filter ERC721 transactions
-     */
-    if (item.toTokenInfo.tokenType === "ERC721") {
-      const currentTokenAddress = erc721approversList.find(
-        token =>
-          token.tokenOperator ===
-          (tokenId !== "all" ? item.toTokenInfo.address : spender)
-      );
-      const index = erc721approversList.findIndex(
-        token =>
-          token.tokenOperator ===
-          (tokenId !== "all" ? item.toTokenInfo.address : spender)
-      );
-      //it's a new approver or new token
-      if (
-        !currentTokenAddress ||
-        !currentTokenAddress.tokenIds?.includes(tokenId)
-      ) {
-        finalList.push(item);
+      /**
+       * Filter ERC721 transactions
+       */
+      if (item.toTokenInfo.tokenType === "ERC721") {
+        const currentTokenAddress = erc721approversList.find(
+          token =>
+            token.tokenOperator ===
+            (tokenId !== "all" ? item.toTokenInfo.address : spender)
+        );
+        const index = erc721approversList.findIndex(
+          token =>
+            token.tokenOperator ===
+            (tokenId !== "all" ? item.toTokenInfo.address : spender)
+        );
+        //it's a new approver or new token
+        if (
+          !currentTokenAddress ||
+          !currentTokenAddress.tokenIds?.includes(tokenId)
+        ) {
+          finalList.push(item);
 
-        if (currentTokenAddress) {
-          erc721approversList[index].tokenIds = (
-            erc721approversList[index].tokenIds || []
-          ).concat([tokenId]);
-        } else {
-          erc721approversList.push({
-            tokenOperator:
-              tokenId !== "all"
-                ? item.toTokenInfo.address
-                : data.object.operator,
-            tokenIds: [tokenId],
-          });
+          if (currentTokenAddress) {
+            erc721approversList[index].tokenIds = (
+              erc721approversList[index].tokenIds || []
+            ).concat([tokenId]);
+          } else {
+            erc721approversList.push({
+              tokenOperator:
+                tokenId !== "all"
+                  ? item.toTokenInfo.address
+                  : data?.object.operator,
+              tokenIds: [tokenId],
+            });
+          }
         }
       }
     }

@@ -188,6 +188,10 @@ function TokenList({
   return loading || isLoading ? (
     <div className="flex items-center justify-center w-full">
       <Loader />
+      <p>
+        In some cases the loading can be longer due to the high volume of data
+        to retrieve
+      </p>
     </div>
   ) : (
     <>

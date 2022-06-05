@@ -37,16 +37,41 @@ export const sendRequest = (config: {
   );
 };
 
-export const reqTransactions = (
+export const reqTransactions = async (
   address: string,
   space: "EVM" | "CORE",
-  limit?: number,
-  skip?: number
+  limit?: number
 ): Promise<{ list: Transaction[] }> => {
+  let transactions: Transaction[] = [];
+
+  const skips = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900];
+
+  for (const skip of skips) {
+    try {
+      const data = await getTransac(address, skip, space, limit);
+      if (data.list.length > 0) {
+        transactions = transactions.concat(data.list);
+      } else {
+        break;
+      }
+    } catch {
+      break;
+    }
+  }
+  console.log(transactions.length);
+  return Promise.resolve({ list: transactions });
+};
+
+const getTransac = (
+  address: string,
+  skip: number,
+  space: "EVM" | "CORE",
+  limit?: number
+) => {
   return sendRequest({
-    url: `/transaction?accountAddress=${address}&limit=${limit || 100}&skip=${
-      skip || 0
-    }&tab=transaction`,
+    url: `/transaction?accountAddress=${address}&limit=${
+      limit || 100
+    }&skip=${skip}&tab=transaction`,
     space,
   });
 };
