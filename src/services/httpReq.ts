@@ -58,7 +58,7 @@ export const reqTransactions = async (
       break;
     }
   }
-  console.log(transactions.length);
+
   return Promise.resolve({ list: transactions });
 };
 
