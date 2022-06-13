@@ -66,6 +66,7 @@ export interface TokenInfos {
   iconUrl?: string;
   price?: string;
   tokenId?: string;
+  transactionHash?: string;
   transaction?: Transaction;
   spender?: { name: string; address: string };
   name?: string;

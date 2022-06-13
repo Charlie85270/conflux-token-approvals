@@ -37,7 +37,7 @@ export const sendRequest = (config: {
   );
 };
 
-export const reqTransactions = async (
+export const reqTransactionsAll = async (
   address: string,
   space: "EVM" | "CORE",
   limit?: number
@@ -46,18 +46,12 @@ export const reqTransactions = async (
 
   const skips = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900];
 
-  for (const skip of skips) {
-    try {
-      const data = await getTransac(address, skip, space, limit);
-      if (data.list.length > 0) {
-        transactions = transactions.concat(data.list);
-      } else {
-        break;
-      }
-    } catch {
-      break;
-    }
-  }
+  const promises = skips.map(skip => getTransac(address, skip, space, limit));
+
+  const result = await Promise.all(promises);
+  result.forEach(result => {
+    transactions = transactions.concat(result?.list || ["oui"]);
+  });
 
   return Promise.resolve({ list: transactions });
 };
