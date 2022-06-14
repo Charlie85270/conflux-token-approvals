@@ -59,11 +59,8 @@ function TokenList({
 
     const completeData = await Promise.all(
       transactionsWithContractInfos.map(async token => {
-        const dataToDecode = await reqDetailTransaction(token.hash, space);
-
+        const data = token.data;
         try {
-          const data = await token.contract.abi.decodeData(dataToDecode.data);
-          const tokenInfos = await reqToken(token.toTokenInfo.address, space);
           let allowance = 0;
           let tokenId = null;
           try {
@@ -138,7 +135,6 @@ function TokenList({
 
           const tokenData = await getTokenData(
             abi === ERC721 ? spenderData.address : token.toTokenInfo.address,
-            tokenInfos,
             userTokens,
             tokenMapping
           );
@@ -148,7 +144,7 @@ function TokenList({
             tokenId,
             tokenType: token.toTokenInfo.tokenType,
             transactionHash: token.hash,
-            iconUrl: tokenInfos.iconUrl || tokenData.iconUrl,
+            iconUrl: tokenData.iconUrl,
             spender: { name: spenderData.name, address: spenderData.address },
             transaction: token,
             name: token.toContractInfo.name || `${token.toTokenInfo.name}`,

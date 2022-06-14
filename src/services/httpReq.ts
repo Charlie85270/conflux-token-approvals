@@ -93,7 +93,7 @@ export const reqContractAndToken = (
 export const reqDetailTransaction = (
   id: string,
   space?: Space
-): Promise<{ data: string }> => {
+): Promise<any> => {
   return sendRequest({
     url: `/transaction/${id}`,
     space,

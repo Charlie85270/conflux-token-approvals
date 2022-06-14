@@ -59,6 +59,8 @@ export interface Transaction {
     name: string;
     tokenType: string;
   };
+  details: any;
+  data: any;
 }
 
 export interface TokenInfos {

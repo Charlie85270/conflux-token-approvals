@@ -152,12 +152,16 @@ export const removeDoubleItem = async (
     tokenIds: string[];
   }[] = [];
   const finalList: Transaction[] = [];
+  const allPromise = list.map(item => {
+    return reqDetailTransaction(item.hash, space);
+  });
+  const dataAll = await Promise.all(allPromise);
 
   for (const item of list) {
     /**
      * Get transactions details
      */
-    const dataToDecode = await reqDetailTransaction(item.hash, space);
+    const dataToDecode = dataAll.find(data => data.hash === item.hash);
     if (item.toContractInfo) {
       const contract = conflux.Contract({
         address: item.toContractInfo.address,
@@ -169,6 +173,8 @@ export const removeDoubleItem = async (
             : ERC1155,
       });
       const data = await contract.abi.decodeData(dataToDecode.data);
+
+      const itemFinal = { ...item, data, details: dataToDecode };
 
       const tokenId =
         (data?.object?.tokenId && data?.object?.tokenId[0]) || "all";
@@ -192,7 +198,7 @@ export const removeDoubleItem = async (
           !currentApprover ||
           !currentApprover.tokens?.includes(item.toTokenInfo.address)
         ) {
-          finalList.push(item);
+          finalList.push(itemFinal);
           if (currentApprover) {
             erc20approversList[index].tokens = (
               erc20approversList[index].tokens || []
@@ -224,7 +230,7 @@ export const removeDoubleItem = async (
           !currentTokenAddress ||
           !currentTokenAddress.tokenIds?.includes(tokenId)
         ) {
-          finalList.push(item);
+          finalList.push(itemFinal);
 
           if (currentTokenAddress) {
             erc721approversList[index].tokenIds = (
@@ -257,10 +263,7 @@ export const isSameAddress = (address1?: string, address2?: string) => {
 
 export async function getTokenData(
   address: string,
-  tokenInfos: {
-    decimals: 18;
-    totalSupply: 0;
-  },
+
   userTokens: TokenData[],
   tokenMapping?: TokenMapping
 ) {
@@ -272,9 +275,8 @@ export async function getTokenData(
     iconUrl: token?.iconUrl,
     symbol: token?.symbol || userToken?.symbol,
     price: userToken?.price,
-    decimals: tokenInfos.decimals || token?.decimals || userToken?.decimals,
-    totalSupply:
-      tokenInfos.totalSupply || token?.totalSupply || userToken?.totalSupply,
+    decimals: token?.decimals || userToken?.decimals,
+    totalSupply: token?.totalSupply || userToken?.totalSupply,
     balance: userToken?.balance || 0,
   };
 }
