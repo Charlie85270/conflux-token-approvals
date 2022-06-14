@@ -54,6 +54,9 @@ function TokensApprovals({ address }: Props) {
   };
 
   useEffect(() => {
+    setUserTokens([]);
+    setTokenMapping(undefined);
+    setTransactions([]);
     if (address) {
       loadData(address);
     }
