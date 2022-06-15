@@ -29,7 +29,7 @@ function App() {
         desc="Manage your token approvals on the conflux nextork"
       >
         <div
-          className="mb-20"
+          className="mb-56 md:mb-20"
           style={{
             backgroundImage: 'url("banner.svg")',
             backgroundPosition: "left",
