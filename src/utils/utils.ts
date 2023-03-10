@@ -61,9 +61,11 @@ async function getTokenMapping(
   try {
     const res = await axios.get(url);
 
-    const tokens: TokenFromList[] = res.data.list;
+    const tokens: TokenFromList[] =
+      res?.data?.data?.list || res?.data?.result?.list || [];
 
     const tokenMapping = {};
+
     for (const token of tokens) {
       // @ts-ignore
       tokenMapping[token.address] = token;
@@ -161,7 +163,10 @@ export const removeDoubleItem = async (
     /**
      * Get transactions details
      */
-    const dataToDecode = dataAll.find(data => data.hash === item.hash);
+    const dataToDecode = dataAll.find(
+      data => data?.result?.hash === item.hash || data?.data?.hash === item.hash
+    );
+
     if (item.toContractInfo) {
       const contract = conflux.Contract({
         address: item.toContractInfo.address,
@@ -172,9 +177,15 @@ export const removeDoubleItem = async (
             ? ERC20
             : ERC1155,
       });
-      const data = await contract.abi.decodeData(dataToDecode.data);
+      const data = await contract.abi.decodeData(
+        dataToDecode?.result?.data || dataToDecode.data?.data
+      );
 
-      const itemFinal = { ...item, data, details: dataToDecode };
+      const itemFinal = {
+        ...item,
+        data,
+        details: dataToDecode?.result || dataToDecode?.data,
+      };
 
       const tokenId =
         (data?.object?.tokenId && data?.object?.tokenId[0]) || "all";

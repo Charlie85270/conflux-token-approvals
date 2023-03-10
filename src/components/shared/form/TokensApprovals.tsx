@@ -22,6 +22,7 @@ function TokensApprovals({ address }: Props) {
     if (!space) {
       return null;
     }
+
     setLoading(true);
     Promise.all([
       reqTransactionsAll(address, space),
@@ -30,7 +31,10 @@ function TokensApprovals({ address }: Props) {
       getFullTokenMapping(1030, "EVM"),
     ])
       .then(async data => {
-        setUserTokens(data[1].list);
+        setUserTokens(
+          // @ts-ignore
+          data[1]?.result?.list || data[1]?.list || data[1]?.data.list
+        );
         setTokenMapping({ ...data[2], ...data[3] });
         removeDoubleItem(
           data[0].list.filter(
@@ -48,7 +52,8 @@ function TokensApprovals({ address }: Props) {
             setLoading(false);
           });
       })
-      .catch(() => {
+      .catch(e => {
+        console.log("err", e);
         setLoading(false);
       });
   };

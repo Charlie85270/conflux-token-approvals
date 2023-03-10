@@ -172,6 +172,7 @@ export const ManageApprovals = ({
   const isSameAddresses =
     (coreAccount && isSameAddress(addressInput, coreAccount)) ||
     (evmAccount && isSameAddress(addressInput, evmAccount));
+
   return (
     <div className="flex flex-col items-center gap-2">
       <ToastContainer />
@@ -222,7 +223,7 @@ export const ManageApprovals = ({
           </div>
         ) : (space === "CORE" && coreAccount) ||
           (space === "EVM" && evmAccount) ? (
-          isSameAddresses ? (
+          !isSameAddresses ? (
             <p>You're not the owner of this address</p>
           ) : (
             <>

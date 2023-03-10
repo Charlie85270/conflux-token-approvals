@@ -50,7 +50,9 @@ export const reqTransactionsAll = async (
 
   const result = await Promise.all(promises);
   result.forEach(result => {
-    transactions = transactions.concat(result?.list || ["oui"]);
+    transactions = transactions.concat(
+      result?.result?.list || result?.data?.list || []
+    );
   });
 
   return Promise.resolve({ list: transactions });
@@ -73,7 +75,7 @@ const getTransac = (
 export const reqUserTokens = (
   address: string,
   space?: Space
-): Promise<{ list: TokenData[] }> => {
+): Promise<{ result: { list: TokenData[] } }> => {
   return sendRequest({
     url: `/token?accountAddress=${address}`,
     space,

@@ -44,6 +44,7 @@ function TokenList({
 
   const loadData = async () => {
     setLoading(true);
+
     // Filter unique token contract addresses and convert all events to Contract instances
     const transactionsWithContractInfos = transactions
       .filter(tr => tr.toContractInfo)
@@ -133,8 +134,10 @@ function TokenList({
             space
           );
 
+          const dataSpent = spenderData?.result || spenderData?.data;
+
           const tokenData = await getTokenData(
-            abi === ERC721 ? spenderData.address : token.toTokenInfo.address,
+            abi === ERC721 ? dataSpent?.address : token.toTokenInfo.address,
             userTokens,
             tokenMapping
           );
@@ -145,7 +148,10 @@ function TokenList({
             tokenType: token.toTokenInfo.tokenType,
             transactionHash: token.hash,
             iconUrl: tokenData.iconUrl,
-            spender: { name: spenderData.name, address: spenderData.address },
+            spender: {
+              name: dataSpent?.name,
+              address: dataSpent?.address,
+            },
             transaction: token,
             name: token.toContractInfo.name || `${token.toTokenInfo.name}`,
             allowance,
